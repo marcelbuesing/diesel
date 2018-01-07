@@ -36,6 +36,7 @@ pub struct MysqlTypeMetadata {
 /// The null variant is omitted, as we will never prepare a statement in which
 /// one of the bind parameters can always be NULL
 #[derive(Debug, Hash, PartialEq, Eq, Clone, Copy)]
+#[non_exhaustive]
 pub enum MysqlType {
     /// Sets `buffer_type` to `MYSQL_TYPE_TINY`
     Tiny,
@@ -49,6 +50,8 @@ pub enum MysqlType {
     Float,
     /// Sets `buffer_type` to `MYSQL_TYPE_DOUBLE`
     Double,
+    /// Sets `buffer_type` to `MYSQL_TYPE_NEWDECIMAL`
+    Numeric,
     /// Sets `buffer_type` to `MYSQL_TYPE_TIME`
     Time,
     /// Sets `buffer_type` to `MYSQL_TYPE_DATE`
