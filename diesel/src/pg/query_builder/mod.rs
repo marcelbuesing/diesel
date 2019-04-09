@@ -4,6 +4,7 @@ use crate::result::QueryResult;
 
 mod distinct_on;
 mod query_fragment_impls;
+mod limit_offset;
 pub use self::distinct_on::DistinctOnClause;
 
 /// The PostgreSQL query builder
