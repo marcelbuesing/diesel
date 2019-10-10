@@ -16,7 +16,7 @@ use crate::query_builder::order_clause::*;
 use crate::query_builder::select_clause::*;
 use crate::query_builder::update_statement::*;
 use crate::query_builder::where_clause::*;
-use crate::query_builder::{AsQuery, Query, QueryFragment, SelectQuery, SelectStatement};
+use crate::query_builder::{AsQuery, IntoBoxedClause, Query, QueryFragment, SelectQuery, SelectStatement};
 use crate::query_dsl::boxed_dsl::BoxedDsl;
 use crate::query_dsl::methods::*;
 use crate::query_dsl::*;
@@ -346,7 +346,7 @@ where
     D: QueryFragment<DB> + 'a,
     W: Into<BoxedWhereClause<'a, DB>>,
     O: Into<Option<Box<dyn QueryFragment<DB> + 'a>>>,
-    LOf: Into<BoxedLimitOffsetClause<'a, DB>>,
+    LOf: IntoBoxedClause<'a, DB, BoxedClause = BoxedLimitOffsetClause<'a, DB>>,
     G: QueryFragment<DB> + 'a,
 {
     type Output = BoxedSelectStatement<'a, S::SqlType, F, DB>;
@@ -358,7 +358,7 @@ where
             Box::new(self.distinct),
             self.where_clause.into(),
             self.order.into(),
-            self.limit_offset.into(),
+            self.limit_offset.into_boxed(),
             Box::new(self.group_by),
         )
     }
@@ -374,7 +374,7 @@ where
     D: QueryFragment<DB> + 'a,
     W: Into<BoxedWhereClause<'a, DB>>,
     O: Into<Option<Box<dyn QueryFragment<DB> + 'a>>>,
-    LOf: Into<BoxedLimitOffsetClause<'a, DB>>,
+    LOf: IntoBoxedClause<'a, DB, BoxedClause = BoxedLimitOffsetClause<'a, DB>>,
     G: QueryFragment<DB> + 'a,
 {
     type Output = BoxedSelectStatement<'a, <F::DefaultSelection as Expression>::SqlType, F, DB>;
@@ -385,7 +385,7 @@ where
             Box::new(self.distinct),
             self.where_clause.into(),
             self.order.into(),
-            self.limit_offset.into(),
+            self.limit_offset.into_boxed(),
             Box::new(self.group_by),
         )
     }
