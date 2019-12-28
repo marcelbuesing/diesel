@@ -333,7 +333,7 @@ pub mod prelude {
     pub use crate::mysql::MysqlConnection;
     #[cfg(feature = "postgres")]
     #[doc(inline)]
-    pub use crate::pg::PgConnection;
+    pub use crate::pg::{PgConnection, PostgresConnection};
     #[cfg(feature = "sqlite")]
     #[doc(inline)]
     pub use crate::sqlite::SqliteConnection;
