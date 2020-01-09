@@ -125,9 +125,6 @@
     clippy::used_underscore_binding
 )]
 
-#[cfg(feature = "postgres")]
-#[macro_use]
-extern crate bitflags;
 extern crate byteorder;
 #[macro_use]
 extern crate diesel_derives;
@@ -167,7 +164,7 @@ pub mod row;
 
 #[cfg(feature = "mysql")]
 pub mod mysql;
-#[cfg(feature = "postgres")]
+#[cfg(any(feature = "postgres", feature = "unstable_pure_rust_postgres"))]
 pub mod pg;
 #[cfg(feature = "sqlite")]
 pub mod sqlite;
@@ -284,7 +281,7 @@ pub mod helper_types {
     pub type Distinct<Source> = <Source as DistinctDsl>::Output;
 
     /// Represents the return type of `.distinct_on(expr)`
-    #[cfg(feature = "postgres")]
+    #[cfg(any(feature = "postgres", feature = "unstable_pure_rust_postgres"))]
     pub type DistinctOn<Source, Expr> = <Source as DistinctOnDsl<Expr>>::Output;
 
     /// Represents the return type of `.single_value()`
@@ -333,7 +330,9 @@ pub mod prelude {
     pub use crate::mysql::MysqlConnection;
     #[cfg(feature = "postgres")]
     #[doc(inline)]
-    pub use crate::pg::{PgConnection, PostgresConnection};
+    pub use crate::pg::PgConnection;
+    #[cfg(feature = "unstable_pure_rust_postgres")]
+    pub use crate::pg::PostgresConnection;
     #[cfg(feature = "sqlite")]
     #[doc(inline)]
     pub use crate::sqlite::SqliteConnection;
