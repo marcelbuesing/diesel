@@ -16,6 +16,11 @@ use crate::serialize::{self, Output};
 ///
 /// ```
 /// # #[cfg(feature = "postgres")]
+/// ```no_run
+/// # #[macro_use]
+/// # extern crate diesel;
+/// #
+/// # #[cfg(any(feature = "postgres", feature = "unstable_pure_rust_postgres"))]
 /// # mod the_impl {
 /// #     use diesel::prelude::*;
 /// #     use diesel::pg::Pg;
