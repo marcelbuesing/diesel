@@ -55,7 +55,7 @@ use std::{env, fs};
 
 use self::config::Config;
 use self::database_error::{DatabaseError, DatabaseResult};
-use migrations::MigrationError;
+use crate::migrations::MigrationError;
 use migrations_internals::TIMESTAMP_FORMAT;
 
 fn main() {
@@ -216,8 +216,7 @@ fn migrations_dir(matches: &ArgMatches) -> Result<PathBuf, MigrationError> {
                 Config::read(matches)
                     .unwrap_or_else(handle_error)
                     .migrations_directory?
-                    .dir
-                    .to_owned(),
+                    .dir,
             )
         });
 
@@ -248,7 +247,7 @@ fn create_migrations_dir(matches: &ArgMatches) -> DatabaseResult<PathBuf> {
         create_migrations_directory(&dir)?;
     }
 
-    Ok(dir.to_owned())
+    Ok(dir)
 }
 
 fn create_config_file(matches: &ArgMatches) -> DatabaseResult<()> {
@@ -265,11 +264,11 @@ fn create_config_file(matches: &ArgMatches) -> DatabaseResult<()> {
 fn run_database_command(matches: &ArgMatches) -> Result<(), Box<dyn Error>> {
     match matches.subcommand() {
         ("setup", Some(args)) => {
-            let migrations_dir = migrations_dir(args).unwrap_or_else(handle_error);
+            let migrations_dir = migrations_dir(matches).unwrap_or_else(handle_error);
             database::setup_database(args, &migrations_dir)?;
         }
         ("reset", Some(args)) => {
-            let migrations_dir = migrations_dir(args).unwrap_or_else(handle_error);
+            let migrations_dir = migrations_dir(matches).unwrap_or_else(handle_error);
             database::reset_database(args, &migrations_dir)?;
             regenerate_schema_if_file_specified(matches)?;
         }
@@ -376,8 +375,8 @@ fn convert_absolute_path_to_relative(target_path: &Path, mut current_path: &Path
 }
 
 fn run_infer_schema(matches: &ArgMatches) -> Result<(), Box<dyn Error>> {
-    use infer_schema_internals::TableName;
-    use print_schema::*;
+    use crate::infer_schema_internals::TableName;
+    use crate::print_schema::*;
 
     let database_url = database::database_url(matches);
     let mut config = Config::read(matches)?.print_schema;
@@ -468,7 +467,7 @@ fn regenerate_schema_if_file_specified(matches: &ArgMatches) -> Result<(), Box<d
 mod tests {
     extern crate tempfile;
 
-    use database_error::DatabaseError;
+    use crate::database_error::DatabaseError;
 
     use self::tempfile::Builder;
 
